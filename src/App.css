@@ -2,6 +2,26 @@
   text-align: center;
 }
 
+.parallax-container {
+  background-image: url('./BlogWRite0.jpg');
+  height: 50ch;
+  width: 100vw;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.parallax-content {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+}
+
 .App-logo {
   pointer-events: none;
 }
@@ -29,4 +49,20 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.text-white {
+  color: white;
 }

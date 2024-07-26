@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
 
 const Search = ({ search, handleChange }) => {
     const navigate = useNavigate();
@@ -26,9 +27,9 @@ const Search = ({ search, handleChange }) => {
                         onChange={handleChange}
                     />
                 </div>
-                <button className="btn btn-secondary search-btn">
-                    <i className="fa fa-search" />
-                </button>
+                <Button type="submit" variant="outline-info">
+                    🔍
+                </Button>
             </form>
         </div>
     );

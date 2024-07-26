@@ -16,6 +16,7 @@ import Blogs from "./pages/Blog";
 import UserProfile from "./pages/UserProfile";
 import CategoryBlog from "./pages/CategoryBlog";
 import TagBlog from "./pages/TagBlog";
+import Footer from "./components/Footer";
 
 function App() {
   const [active, setActive] = useState("home");
@@ -39,7 +40,7 @@ function App() {
   };
   return (
     <div className="App">
-      
+
       <Header setActive={setActive}
         active={active}
         user={user}
@@ -74,6 +75,7 @@ function App() {
         <Route path="/profile" element={<UserProfile user={user} />} />
         <Route path="/tag/:tag" element={<TagBlog setActive={setActive} />} />
       </Routes>
+      <Footer />
     </div>
   );
 }

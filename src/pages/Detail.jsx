@@ -107,7 +107,6 @@ const Detail = ({ setActive, user }) => {
             name: user?.displayName,
             body: userComment,
         });
-        alert("Comment posted successfully");
         await updateDoc(doc(db, "blogs", id), {
             ...blog,
             comments,

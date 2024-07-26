@@ -11,6 +11,7 @@ import Trending from "../components/Trending";
 import Spinner from "../components/Spinner";
 import Tags from "../components/Tags";
 import FeatureBlogs from "../components/FeatureBlog";
+import AboutUs from "./About";
 function useQuery() {
     return new URLSearchParams(useLocation().search);
 }
@@ -164,7 +165,6 @@ const Home = ({ setActive, user, active }) => {
     const handleChange = (e) => {
         const { value } = e.target;
         if (isEmpty(value)) {
-            console.log("test");
             getBlogs();
             setHide(false);
         }
@@ -191,7 +191,8 @@ const Home = ({ setActive, user, active }) => {
 
     console.log("categoryCount", categoryCount);
 
-    return (
+    return (<>
+        <AboutUs />
         <div className="container-fluid pb-4 pt-4 padding">
             <div className="container padding">
                 <div className="row mx-0">
@@ -231,6 +232,7 @@ const Home = ({ setActive, user, active }) => {
                 </div>
             </div>
         </div>
+    </>
     );
 };
 

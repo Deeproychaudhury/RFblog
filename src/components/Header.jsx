@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../style.scss';
 import '../App.css';
-
+//background: "linear-gradient(15deg, #669999 0%,#a3c2c2 15%,#669999 95%)"
 const Header = ({ active, setActive, user, handleLogout }) => {
     const userId = user?.uid;
     const userImage = user?.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     return (
         <Navbar collapseOnSelect expand="lg" variant="light" sticky="top" style={{
-            background: "linear-gradient(15deg, #669999 0%,#a3c2c2 15%,#e6ffff 25%, #f0f5f5 61%, #a3c2c2 75%,#669999 95%)"
+            background: "linear-gradient(15deg, #669999 0%,#a3c2c2 15%,#669999 95%)"
         }}>
             <Container>
                 <Navbar.Brand as={Link} to="/">

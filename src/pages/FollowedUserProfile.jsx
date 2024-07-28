@@ -51,7 +51,7 @@ const FollowedUserProfile = ({ user }) => {
 
     return (
         <Container>
-            <h1>{followedUser.firstName || followedUser.displayName || ""}'s Profile </h1>
+            <h1>{followedUser.firstName || followedUser.displayName || "Followee"}'s Profile </h1>
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>RFBlog</Modal.Title>

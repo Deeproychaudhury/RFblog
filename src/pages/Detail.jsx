@@ -22,6 +22,7 @@ import Tags from "../components/Tags";
 import UserComments from "../components/UserComments";
 import { db, auth } from "../firebase/firebase";
 import Spinner from "../components/Spinner";
+import { Button } from "react-bootstrap";
 
 const Detail = ({ setActive, user }) => {
     const userId = user?.uid;
@@ -148,6 +149,28 @@ const Detail = ({ setActive, user }) => {
         }
     };
 
+    const handleDownload = (blog) => {
+        const element = document.createElement("a");
+        const htmlContent = `
+            <html>
+                <head>
+                    <title>${blog.title}</title>
+                </head>
+                <body>
+                    <h1>${blog.title}</h1>
+                    <img src="${blog?.imgUrl}" alt="${blog.title}" style="max-width: 100%; height: auto;" />
+                    <p>${blog.description}</p>
+                    <div>${blog.author} is the author</div>
+                </body>
+            </html>
+        `;
+        const file = new Blob([htmlContent], { type: 'text/html' });
+        element.href = URL.createObjectURL(file);
+        element.download = `${blog.title}.html`;
+        document.body.appendChild(element); // Required 
+        element.click();
+    };
+
     console.log("relatedBlogs", relatedBlogs);
     return (
         <div className="single">
@@ -171,7 +194,9 @@ const Detail = ({ setActive, user }) => {
                                 <Like handleLike={handleLike} likes={likes} userId={userId} />
                             </span>
                             <p className="text-start">{blog?.description}</p>
+
                             <div className="text-start">
+                                <Button variant="primary" className="my-2" onClick={() => handleDownload(blog)}>Dowload ⬇️</Button>
                                 <Tags tags={blog?.tags} />
                             </div>
                             <br />
@@ -198,6 +223,7 @@ const Detail = ({ setActive, user }) => {
                                     )}
                                 </div>
                             </div>
+
                             <CommentBox
                                 userId={userId}
                                 userComment={userComment}

@@ -222,7 +222,7 @@ const UserProfile = ({ user }) => {
                                 const followedUser = allUsers.find(u => u.id === userId);
                                 return followedUser ? (
                                     <ListGroup.Item key={userId}>
-                                        <Link to={`/followedUser/${userId}`}>
+                                        <Link to={`/followedUser/${userId}`} style={{ textDecoration: "none", color: "black" }}>
                                             {followedUser.displayName || `${followedUser.firstName} ${followedUser.lastName}`}
                                         </Link>
                                     </ListGroup.Item>

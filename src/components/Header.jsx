@@ -17,7 +17,7 @@ const Header = ({ active, setActive, user, handleLogout }) => {
         }}>
             <Container>
                 <Navbar.Brand as={Link} to="/">
-                    <img src="https://5.imimg.com/data5/SELLER/Default/2020/10/PX/KF/AW/20193325/ink-pen-1000x1000.jpg" height="40" alt="logo" />
+                    <img src="../vite.svg" height="40" alt="logo" />
                     <span>RFBLOG</span>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />

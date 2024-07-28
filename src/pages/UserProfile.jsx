@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { db, storage } from '../firebase/firebase';
 import { updateProfile } from 'firebase/auth';
-import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, collection, query, where, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Button, Container, Row, Col, Form, ListGroup, Spinner } from 'react-bootstrap';
+import { Button, Container, Row, Col, Form, ListGroup } from 'react-bootstrap';
+import Spinner from "../components/Spinner";
+import BlogSection from "../components/BlogSection";
 
 const UserProfile = ({ user }) => {
+    const [userCreatedBlogs, setUserCreatedBlogs] = useState([]);
     const [editable, setEditable] = useState(false);
     const [displayName, setDisplayName] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [imageUrl, setImageUrl] = useState("");
     const [followedUsers, setFollowedUsers] = useState([]);
     const [followers, setFollowers] = useState(0);
-    const [allUsers, setAllUsers] = useState([]); // To store all users
+    const [allUsers, setAllUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -52,11 +56,24 @@ const UserProfile = ({ user }) => {
             }
         };
 
+        const fetchUserBlogs = async () => {
+            if (user) {
+                const blogsQuery = query(collection(db, 'blogs'), where('userId', '==', user.uid));
+                const blogsSnapshot = await getDocs(blogsQuery);
+                let userBlogs = [];
+                blogsSnapshot.forEach((doc) => {
+                    userBlogs.push({ id: doc.id, ...doc.data() });
+                });
+                setUserCreatedBlogs(userBlogs);
+            }
+        };
+
         const fetchData = async () => {
             try {
                 await fetchUserData();
                 await fetchAllUsers();
                 await fetchFollowData();
+                await fetchUserBlogs();
             } catch (error) {
                 console.error("Error fetching data: ", error);
             } finally {
@@ -83,7 +100,7 @@ const UserProfile = ({ user }) => {
                 email: user.email,
                 imageUrl
             });
-            await updateProfile(user, { displayName, photoURL: imageUrl }); // Ensure displayName and photoURL are updated in auth profile
+            await updateProfile(user, { displayName, photoURL: imageUrl });
             setEditable(false);
         }
     };
@@ -117,91 +134,118 @@ const UserProfile = ({ user }) => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this blog?")) {
+            try {
+                setLoading(true);
+                await deleteDoc(doc(db, "blogs", id));
+                alert("Blog deleted successfully");
+                setUserCreatedBlogs(userCreatedBlogs.filter(blog => blog.id !== id));
+                setLoading(false);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
+
     if (loading) {
-        return (
-            <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-                <Spinner animation="border" />
-            </Container>
-        );
+        return <Spinner />;
     }
 
     return (
-        <Container>
-            <h1 className="text-center my-4">User Profile</h1>
-            {user ? (
+        <>
+            <Container>
+                <h1 className="text-center my-4">User Profile</h1>
+                {user ? (
+                    <Row className="justify-content-center">
+                        <Col md={6}>
+                            <ListGroup>
+                                <ListGroup.Item>Email: {user.email}</ListGroup.Item>
+                                <ListGroup.Item>UserID: {user.uid}</ListGroup.Item>
+                                <ListGroup.Item>
+                                    Display Name:
+                                    {editable ? (
+                                        <Form.Control
+                                            type="text"
+                                            value={displayName}
+                                            onChange={(e) => setDisplayName(e.target.value)}
+                                        />
+                                    ) : (
+                                        displayName
+                                    )}
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    Profile Image:
+                                    {editable ? (
+                                        <Form.Control
+                                            type="file"
+                                            onChange={handleImageUpload}
+                                        />
+                                    ) : (
+                                        <img src={imageUrl} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
+                                    )}
+                                </ListGroup.Item>
+                                <ListGroup.Item>Followers: {followers}</ListGroup.Item>
+                            </ListGroup>
+                            {editable ? (
+                                <Button className="mt-3" onClick={handleSave}>Save</Button>
+                            ) : (
+                                <Button className="mt-3" onClick={handleEdit}>Edit</Button>
+                            )}
+                        </Col>
+                    </Row>
+                ) : (
+                    <p>User data not available</p>
+                )}
+                <h2 className="text-center my-4">All Users</h2>
                 <Row className="justify-content-center">
                     <Col md={6}>
                         <ListGroup>
-                            <ListGroup.Item>Email: {user.email}</ListGroup.Item>
-                            <ListGroup.Item>UserID:{user.uid}</ListGroup.Item>
-                            <ListGroup.Item>
-                                Display Name:
-                                {editable ? (
-                                    <Form.Control
-                                        type="text"
-                                        value={displayName}
-                                        onChange={(e) => setDisplayName(e.target.value)}
-                                    />
-                                ) : (
-                                    displayName
-                                )}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                Profile Image:
-                                {editable ? (
-                                    <Form.Control
-                                        type="file"
-                                        onChange={handleImageUpload}
-                                    />
-                                ) : (
-                                    <img src={imageUrl} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
-                                )}
-                            </ListGroup.Item>
-                            <ListGroup.Item>Followers: {followers}</ListGroup.Item>
+                            {allUsers.map((otherUser) => (
+                                <ListGroup.Item key={otherUser.id} className="d-flex justify-content-between align-items-center">
+                                    {otherUser.displayName || `${otherUser.firstName} ${otherUser.lastName}`}
+                                    {followedUsers.includes(otherUser.id) ? (
+                                        <Button variant="danger" onClick={() => handleFollow(otherUser.id)}>Unfollow</Button>
+                                    ) : (
+                                        <Button variant="primary" onClick={() => handleFollow(otherUser.id)}>Follow</Button>
+                                    )}
+                                </ListGroup.Item>
+                            ))}
                         </ListGroup>
-                        {editable ? (
-                            <Button className="mt-3" onClick={handleSave}>Save</Button>
-                        ) : (
-                            <Button className="mt-3" onClick={handleEdit}>Edit</Button>
-                        )}
                     </Col>
                 </Row>
-            ) : (
-                <p>User data not available</p>
-            )}
-            <h2 className="text-center my-4">All Users</h2>
+                <h2 className="text-center my-4">Followed Users</h2>
+                <Row className="justify-content-center">
+                    <Col md={6}>
+                        <ListGroup>
+                            {followedUsers.map((userId) => {
+                                const followedUser = allUsers.find(u => u.id === userId);
+                                return followedUser ? (
+                                    <ListGroup.Item key={userId}>
+                                        <Link to={`/followedUser/${userId}`}>
+                                            {followedUser.displayName || `${followedUser.firstName} ${followedUser.lastName}`}
+                                        </Link>
+                                    </ListGroup.Item>
+                                ) : null;
+                            })}
+                        </ListGroup>
+                    </Col>
+                </Row>
+            </Container>
+            <h2 className="text-center my-4">Your Blogs</h2>
             <Row className="justify-content-center">
                 <Col md={6}>
-                    <ListGroup>
-                        {allUsers.map((otherUser) => (
-                            <ListGroup.Item key={otherUser.id} className="d-flex justify-content-between align-items-center">
-                                {otherUser.displayName || `${otherUser.firstName} ${otherUser.lastName}`}
-                                {followedUsers.includes(otherUser.id) ? (
-                                    <Button variant="danger" onClick={() => handleFollow(otherUser.id)}>Unfollow</Button>
-                                ) : (
-                                    <Button variant="primary" onClick={() => handleFollow(otherUser.id)}>Follow</Button>
-                                )}
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
+                    {userCreatedBlogs.map(blog => (
+                        <BlogSection
+                            key={blog.id}
+                            user={user}
+                            handleDelete={handleDelete}
+                            {...blog}
+                        />
+                    ))}
                 </Col>
             </Row>
-            <h2 className="text-center my-4">Followed Users</h2>
-            <Row className="justify-content-center">
-                <Col md={6}>
-                    <ListGroup>
-                        {followedUsers.map((userId) => {
-                            const followedUser = allUsers.find(u => u.id === userId);
-                            return followedUser ? (
-                                <ListGroup.Item key={userId}>
-                                    {followedUser.displayName || `${followedUser.firstName} ${followedUser.lastName}`}
-                                </ListGroup.Item>
-                            ) : null;
-                        })}
-                    </ListGroup>
-                </Col>
-            </Row>
-        </Container>
+        </>
     );
 };
 

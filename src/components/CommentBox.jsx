@@ -10,6 +10,7 @@ const CommentBox = ({ userId, userComment, setUserComment, handleComment }) => {
                     <textarea
                         rows="4"
                         value={userComment}
+                        placeholder="post a comment"
                         onChange={(e) => setUserComment(e.target.value)}
                         className="form-control description"
                     />
@@ -24,13 +25,17 @@ const CommentBox = ({ userId, userComment, setUserComment, handleComment }) => {
                 </>
             ) : (
                 <>
-                    <button
+                    {userComment.trim() !== "" && (<button
                         className="btn btn-primary"
                         type="submit"
+
                         onClick={handleComment}
                     >
                         Post Comment
-                    </button>
+                    </button>)
+
+                    }
+
                 </>
             )}
         </>

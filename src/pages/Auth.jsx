@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { Form } from "react-bootstrap";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "firebase/auth";
+import { Form, Modal, Button } from "react-bootstrap";
 import { setDoc, doc } from "firebase/firestore";
+
 const initialState = {
     firstName: "",
     lastName: "",
@@ -11,9 +12,11 @@ const initialState = {
     password: "",
     confirmPassword: "",
 };
+
 const Auth = ({ setActive, setUser }) => {
     const [state, setState] = useState(initialState);
     const [signUp, setSignUp] = useState(false);
+    const [forgotPassword, setForgotPassword] = useState(false);
 
     const { email, password, firstName, lastName, confirmPassword } = state;
 
@@ -22,6 +25,7 @@ const Auth = ({ setActive, setUser }) => {
     const handleChange = (e) => {
         setState({ ...state, [e.target.name]: e.target.value });
     };
+
     const handleAuth = async (e) => {
         e.preventDefault();
         try {
@@ -29,12 +33,12 @@ const Auth = ({ setActive, setUser }) => {
                 if (email && password) {
                     const { user } = await signInWithEmailAndPassword(auth, email, password);
                     setActive("home");
+                } else {
+                    alert("Fill all fields");
                 }
-                else { alert("fill all fields") }
-            }
-            else {
+            } else {
                 if (password !== confirmPassword || password.length < 6) {
-                    alert("This is wrong. Make sure confirm password matches and password length is >=6")
+                    alert("Password must match and be at least 6 characters long");
                 }
                 if (firstName && lastName && email && password) {
                     const { user } = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,20 +46,33 @@ const Auth = ({ setActive, setUser }) => {
                     await setDoc(doc(db, 'users', user.uid), {
                         firstName,
                         lastName,
-                        email
+                        email,
                     });
                     setActive("home");
-                }
-                else {
-                    alert("all fields to be filled")
+                } else {
+                    alert("All fields must be filled");
                 }
             }
             navigate("/");
         } catch (error) {
             alert(error.message);
         }
+    };
 
-    }
+    const handleForgotPassword = async () => {
+        if (!email) {
+            alert("Please enter your email address");
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("Password reset email sent");
+            setForgotPassword(false);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     return (
         <>
             <div className="container-fluid mb-4">
@@ -109,7 +126,7 @@ const Auth = ({ setActive, setUser }) => {
                                     <input
                                         type="password"
                                         className="form-control input-text-box"
-                                        placeholder="Password and length > 5"
+                                        placeholder="Password (min length: 6)"
                                         name="password"
                                         value={password}
                                         onChange={handleChange}
@@ -136,12 +153,22 @@ const Auth = ({ setActive, setUser }) => {
                                     </button>
                                 </div>
                             </Form>
+                            {!signUp && (
+                                <div className="text-center">
+                                    <button
+                                        className="btn btn-link"
+                                        onClick={() => setForgotPassword(true)}
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                </div>
+                            )}
                             <div>
                                 {!signUp ? (
                                     <>
                                         <div className="text-center justify-content-center mt-2 pt-2">
                                             <p className="small fw-bold mt-2 pt-1 mb-0">
-                                                Don't have an account ?&nbsp;
+                                                Don't have an account?&nbsp;
                                                 <span
                                                     className="link-danger"
                                                     style={{ textDecoration: "none", cursor: "pointer" }}
@@ -156,7 +183,7 @@ const Auth = ({ setActive, setUser }) => {
                                     <>
                                         <div className="text-center justify-content-center mt-2 pt-2">
                                             <p className="small fw-bold mt-2 pt-1 mb-0">
-                                                Already have an account ?&nbsp;
+                                                Already have an account?&nbsp;
                                                 <span
                                                     style={{
                                                         textDecoration: "none",
@@ -176,8 +203,33 @@ const Auth = ({ setActive, setUser }) => {
                     </div>
                 </div>
             </div>
+            <Modal show={forgotPassword} onHide={() => setForgotPassword(false)} centered>
+                <Modal.Header>
+                    <Modal.Title>Reset Password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Please enter your email address to receive a password reset link.</p>
+                    <Form.Group>
+                        <Form.Control
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={handleChange}
+                            name="email"
+                        />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setForgotPassword(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleForgotPassword}>
+                        Send Reset Link
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
-    )
-}
+    );
+};
 
-export default Auth
+export default Auth;

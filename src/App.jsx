@@ -17,6 +17,7 @@ import UserProfile from "./pages/UserProfile";
 import CategoryBlog from "./pages/CategoryBlog";
 import TagBlog from "./pages/TagBlog";
 import Footer from "./components/Footer";
+import FollowedUserProfile from "./pages/FollowedUserProfile";
 
 function App() {
   const [active, setActive] = useState("home");
@@ -74,6 +75,7 @@ function App() {
         <Route path="/auth" element={<Auth setActive={setActive} />} />
         <Route path="/profile" element={<UserProfile user={user} />} />
         <Route path="/tag/:tag" element={<TagBlog setActive={setActive} />} />
+        <Route path="/followedUser/:userId" element={<FollowedUserProfile />} />
       </Routes>
       <Footer />
     </div>

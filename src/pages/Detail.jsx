@@ -193,7 +193,14 @@ const Detail = ({ setActive, user }) => {
                                 {blog?.timestamp.toDate().toDateString()}
                                 <Like handleLike={handleLike} likes={likes} userId={userId} />
                             </span>
-                            <p className="text-start">{blog?.description}</p>
+                            {/* Render the blog description as HTML */}
+                            <div className="text-start">
+                                <div
+                                    className="blog-description"
+                                    dangerouslySetInnerHTML={{ __html: blog?.description }}
+                                />
+                            </div>
+
 
                             <div className="text-start">
                                 <Button variant="primary" className="my-2" onClick={() => handleDownload(blog)}>Dowload ⬇️</Button>

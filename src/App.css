@@ -2,6 +2,19 @@
   text-align: center;
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Ensure the main app takes at least the full viewport height */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .parallax-container {
   background-image: url('./BlogWRite0.jpg');
   height: 50ch;

@@ -40,43 +40,44 @@ function App() {
     });
   };
   return (
-    <div className="App">
-
+    <div className="App d-flex flex-column" style={{ minHeight: "100vh" }}>
       <Header setActive={setActive}
         active={active}
         user={user}
         handleLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<Home setActive={setActive} active={active} user={user} />} />
-        <Route
-          path="/detail/:id"
-          element={<Detail setActive={setActive} user={user} />}
-        />
-        <Route
-          path="/search"
-          element={<Home setActive={setActive} user={user} />}
-        />
-        <Route path="/create" element={
-          user?.uid ? <AddEDITblog user={user} /> : <Navigate to="/" />
-        } />
-        <Route
-          path="/update/:id"
-          element={
-            user?.uid ? (
-              <AddEDITblog user={user} setActive={setActive} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route path="/about" element={<Abouts />} />
-        <Route path="/blogs" element={<Blogs setActive={setActive} />} />
-        <Route path="/category/:category" element={<CategoryBlog setActive={setActive} />} />
-        <Route path="/auth" element={<Auth setActive={setActive} />} />
-        <Route path="/profile" element={<UserProfile user={user} />} />
-        <Route path="/tag/:tag" element={<TagBlog setActive={setActive} />} />
-        <Route path="/followedUser/:userId" element={<FollowedUserProfile />} />
-      </Routes>
+      <div className="flex-grow-1">
+        <Routes>
+          <Route path="/" element={<Home setActive={setActive} active={active} user={user} />} />
+          <Route
+            path="/detail/:id"
+            element={<Detail setActive={setActive} user={user} />}
+          />
+          <Route
+            path="/search"
+            element={<Home setActive={setActive} user={user} />}
+          />
+          <Route path="/create" element={
+            user?.uid ? <AddEDITblog user={user} /> : <Navigate to="/" />
+          } />
+          <Route
+            path="/update/:id"
+            element={
+              user?.uid ? (
+                <AddEDITblog user={user} setActive={setActive} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route path="/about" element={<Abouts />} />
+          <Route path="/blogs" element={<Blogs setActive={setActive} />} />
+          <Route path="/category/:category" element={<CategoryBlog setActive={setActive} />} />
+          <Route path="/auth" element={<Auth setActive={setActive} />} />
+          <Route path="/profile" element={<UserProfile user={user} />} />
+          <Route path="/tag/:tag" element={<TagBlog setActive={setActive} />} />
+          <Route path="/followedUser/:userId" element={<FollowedUserProfile />} />
+        </Routes>
+      </div>
       <Footer />
     </div>
   );

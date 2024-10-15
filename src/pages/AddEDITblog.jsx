@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { addDoc, collection, getDoc, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ReactTagInput from "@pathofdev/react-tag-input";
+import JoditEditor from "jodit-react";  // Import JoditEditor
 import "@pathofdev/react-tag-input/build/index.css";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { db, storage } from '../firebase/firebase';
 const date = new Date();
 const showTime = date.getHours()
@@ -19,6 +22,7 @@ const initialState = {
     likes: []
 };
 
+
 const categoryOption = [
     "Fashion",
     "Technology",
@@ -32,6 +36,7 @@ const AddEDITblog = ({ user, setActive }) => {
     const [form, setForm] = useState(initialState);
     const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(null);
+    const editor = useRef(null);  // Create a ref for JoditEditor
 
     const { id } = useParams();
 
@@ -94,18 +99,35 @@ const AddEDITblog = ({ user, setActive }) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    // Function to handle tags
     const handleTags = (tags) => {
         setForm({ ...form, tags });
     };
-
+    // Function to handle trending
     const handleTrending = (e) => {
         setForm({ ...form, trending: e.target.value });
     };
-
+    // Function to handle category
     const onCategoryChange = (e) => {
         setForm({ ...form, category: e.target.value });
     };
-
+    // Function to handle description
+    const handleDescription = (value) => {
+        setForm({ ...form, description: value });
+    };
+    //jodir editor config
+    const config = {
+        readonly: false,  // All options from https://xdsoft.net/jodit/doc/
+        height: 400,  // Customize height as needed
+        placeholder: "Start typing your blog description...",
+        uploader: {
+            insertImageAsBase64URI: true,  // Embed pasted images as base64
+        },
+        clipboard: {
+            // Allow pasting of images and text
+            matchVisual: false,  // Keep the format from the original source
+        },
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (category && tags && title && description && trending) {
@@ -170,7 +192,7 @@ const AddEDITblog = ({ user, setActive }) => {
                                 />
                             </div>
                             <div className="col-12 py-3">
-                                <p className="trending">Is it trending blog ?</p>
+                                <p className="trending">Do You want it to be trending?</p>
                                 <div className="form-check-inline mx-2">
                                     <input
                                         type="radio"
@@ -211,13 +233,13 @@ const AddEDITblog = ({ user, setActive }) => {
                                 </select>
                             </div>
                             <div className="col-12 py-3">
-                                <textarea
-                                    className="form-control description-box"
-                                    placeholder="Description"
+                                <JoditEditor
+                                    ref={editor}
                                     value={description}
-                                    name="description"
-                                    onChange={handleChange}
+                                    onBlur={handleDescription}
+                                    config={config}
                                 />
+
                             </div>
                             <div className="mb-3">
                                 <input

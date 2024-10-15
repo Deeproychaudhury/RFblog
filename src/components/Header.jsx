@@ -13,7 +13,8 @@ const Header = ({ active, setActive, user, handleLogout }) => {
 
     return (
         <Navbar collapseOnSelect expand="lg" variant="light" sticky="top" style={{
-            background: "linear-gradient(15deg, #669999 0%,#a3c2c2 15%,#669999 95%)"
+            background: "linear-gradient(15deg, #C0C0C0 0%,#C0C2C9 15%,#8D918D 50%,#C0C0C0 85%)", // Gradient background
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" // Soft shadow for depth
         }}>
             <Container>
                 <Navbar.Brand as={Link} to="/">

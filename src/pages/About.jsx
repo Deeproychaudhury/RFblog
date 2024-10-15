@@ -49,7 +49,7 @@ const AboutUs = () => {
         textAlign: 'center',
         padding: '20px',
         color: '#333',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EFEFEF',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         animation: 'fadeIn 2s ease-in-out',
@@ -75,15 +75,19 @@ const AboutUs = () => {
             </style>
             <div style={paragraphStyle}>
                 <div style={headerStyle} ref={headerRef}>
-                    RF Blog
+                    RF Blog 🖊️
                 </div>
                 <hr />
                 <p style={individualParagraphStyle} ref={el => paragraphsRef.current[0] = el}>A blog is a place to share your thoughts, ideas, and stories with the world.</p>
                 <p style={individualParagraphStyle} ref={el => paragraphsRef.current[1] = el}>It's an online journal where you can write about anything that interests you.</p>
                 <p style={individualParagraphStyle} ref={el => paragraphsRef.current[2] = el}>To write a great blog, be yourself, be authentic, and have fun!</p>
+                <br></br>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTG1LW-o46L89kVB2prwNmWNpXYH5nU-2qeg&s" className="img-fluid" alt="Blog" />
             </div>
+
         </div>
+
     );
 };
-
 export default AboutUs;
+

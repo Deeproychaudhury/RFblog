@@ -199,7 +199,7 @@ const Detail = ({ setActive, user }) => {
                                     className="blog-description"
                                     dangerouslySetInnerHTML={{ __html: blog?.description }}
                                 />
-                                <img src={blog?.imgUrl} alt={blog?.title} style={{ width: "100%", height: "auto" }} />
+                                <img src={blog?.imgUrl} alt={blog?.title} style={{ width: "60%", height: "auto" }} />
                             </div>
 
 

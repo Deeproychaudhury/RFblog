@@ -39,10 +39,7 @@ function App() {
       navigate("/auth");
     });
   };
-  function requirelogin() {
-    window.alert("Please login to continue");
-    <Navigate to="/" />;
-  };
+
   return (
     <div className="App d-flex flex-column" style={{ minHeight: "100vh" }}>
       <Header setActive={setActive}
@@ -61,7 +58,7 @@ function App() {
             element={<Home setActive={setActive} user={user} />}
           />
           <Route path="/create" element={
-            user?.uid ? <AddEDITblog user={user} /> : requirelogin
+            user?.uid ? <AddEDITblog user={user} /> : <Navigate to="/auth" />
           } />
           <Route
             path="/update/:id"
@@ -69,7 +66,7 @@ function App() {
               user?.uid ? (
                 <AddEDITblog user={user} setActive={setActive} />
               ) : (
-                <Navigate to="/" />
+                <Navigate to="/auth" />
               )
             }
           />

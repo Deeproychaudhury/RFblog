@@ -82,7 +82,7 @@ const AboutUs = () => {
                 <p style={individualParagraphStyle} ref={el => paragraphsRef.current[1] = el}>It's an online journal where you can write about anything that interests you.</p>
                 <p style={individualParagraphStyle} ref={el => paragraphsRef.current[2] = el}>To write a great blog, be yourself, be authentic, and have fun!</p>
                 <br></br>
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTG1LW-o46L89kVB2prwNmWNpXYH5nU-2qeg&s" className="img-fluid" alt="Blog" />
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTG1LW-o46L89kVB2prwNmWNpXYH5nU-2qeg&s" className="img-fluid" alt="Blog" style={individualParagraphStyle} ref={el => paragraphsRef.current[3] = el} />
             </div>
 
         </div>

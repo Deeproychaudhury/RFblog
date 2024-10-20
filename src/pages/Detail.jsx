@@ -199,10 +199,8 @@ const Detail = ({ setActive, user }) => {
                                     className="blog-description"
                                     dangerouslySetInnerHTML={{ __html: blog?.description }}
                                 />
-                                <img src={blog?.imgUrl} alt={blog?.title} style={{ width: "60%", height: "auto" }} />
+                                {/* <img src={blog?.imgUrl} alt={blog?.title} style={{ width: "60%", height: "auto" }} /> */}
                             </div>
-
-
                             <div className="text-start">
                                 <Button variant="primary" className="my-2" onClick={() => handleDownload(blog)}>Dowload ⬇️</Button>
                                 <Tags tags={blog?.tags} />
